@@ -1,6 +1,14 @@
 trigger:
   - master
 
+schedules:
+  - cron: "30 6 * * 0"   # 12:00 PM IST = 6:30 AM UTC every Sunday
+    displayName: Sunday Noon IST
+    branches:
+      include:
+        - master
+    always: true  # Run even with no recent commits
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -13,7 +21,7 @@ steps:
       jdkVersionOption: '1.11'
       jdkArchitectureOption: 'x64'
       publishJUnitResults: true
-      testResultsFiles: 'target/surefire-reports/junitreports/*.xml'
+      testResultsFiles: '**/surefire-reports/junitreports/*.xml'
       goals: 'clean test'
       options: '-Dsurefire.suiteXmlFiles=src/test/config/failTest.xml'
       continueOnError: true
@@ -25,11 +33,13 @@ steps:
       BROWSERSTACK_NAME: $(BROWSERSTACK_NAME)
 
   - task: CopyFiles@2
+    condition: always()
     inputs:
-      contents: 'target/surefire-reports/junitreports/*xml'
-      targetFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: 'target/surefire-reports/junitreports/*.xml'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/junitreports'
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/junitreports'
       artifactName: 'JUnitReports'
