@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     branches: ["master"]
+  schedule:
+    - cron: '30 6 * * 0'  # Every Sunday at 12:00 PM IST (06:30 UTC)
 
 jobs:
   build:
@@ -26,12 +28,12 @@ jobs:
           username: ${{ secrets.BROWSERSTACK_USERNAME }}
           access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
-
       - name: Set BrowserStack Environment Variables
         run: |
           echo "BROWSERSTACK_PROJECT=QEI PASSING JOB" >> $GITHUB_ENV
           echo "BROWSERSTACK_BUILD=Build-QEI-PASSING-JOB" >> $GITHUB_ENV
           echo "BROWSERSTACK_NAME=PASSING-JOB-TEST" >> $GITHUB_ENV
+
       - name: Build and Test with Maven
         run: mvn clean test "-Dsurefire.suiteXmlFiles=src/test/config/MultipleTest.xml"
 
