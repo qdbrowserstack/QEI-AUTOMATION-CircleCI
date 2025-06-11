@@ -1,6 +1,14 @@
 trigger:
   - master
 
+schedules:
+  - cron: "30 6 * * 0"   # 12:00 PM IST = 6:30 AM UTC every Sunday
+    displayName: Sunday Noon IST
+    branches:
+      include:
+        - master
+    always: true  # Run even with no recent commits  
+
 pool:
   vmImage: 'ubuntu-latest'
 
