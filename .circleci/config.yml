@@ -1,0 +1,125 @@
+version: 2.1
+
+jobs:
+  # --------------------------
+  # PASS JOB
+  # --------------------------
+  pass-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI PASSING JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PASSING-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PASSING-JOB-TEST"' >> $BASH_ENV
+      - run:
+          name: Run Maven Pass Test
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-pass-report
+
+  # --------------------------
+  # FAIL JOB
+  # --------------------------
+  fail-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI FAILED JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-FAILED-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="FAILED-JOB-TEST"' >> $BASH_ENV
+      - run:
+          name: Run Maven Fail Test
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-fail-report
+
+  # --------------------------
+  # MULTIPLE TEST JOB
+  # --------------------------
+  multiple-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI MULTIPLE JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-MULTIPLE-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="MULTIPLE-JOB-TEST"' >> $BASH_ENV
+      - run:
+          name: Run Multiple Tests
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/MultipleTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-multiple-report
+
+  # --------------------------
+  # PARENT-CHILD JOB (2 steps)
+  # --------------------------
+  parent-child-step1:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST"' >> $BASH_ENV
+      - run:
+          name: Run Parent Job
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: parent-job-report
+
+  parent-child-step2:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST"' >> $BASH_ENV
+      - run:
+          name: Run Child Job
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: child-job-report
+
+# --------------------------
+# WORKFLOWS (define schedule + job order)
+# --------------------------
+workflows:
+  version: 2
+  qei-pipeline:
+    triggers:
+      - schedule:
+          cron: "30 6 * * 0" # Every Sunday 06:30 UTC (12:00 PM IST)
+          filters:
+            branches:
+              only: master
+    jobs:
+      - pass-job
+      - fail-job
+      - multiple-job
+      - parent-child-step1
+      - parent-child-step2:
+          requires:
+            - parent-child-step1
