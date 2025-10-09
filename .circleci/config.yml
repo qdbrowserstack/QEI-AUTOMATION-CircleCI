@@ -1,14 +1,113 @@
 version: 2.1
 
 jobs:
-  # [ ... ALL YOUR JOB DEFINITIONS REMAIN UNCHANGED ... ]
-  # The jobs section is correct and already defined above.
+  # --------------------------
+  # PASS JOB
+  # --------------------------
+  pass-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI PASSING JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PASSING-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PASSING-JOB-TEST CIRCLE CI"' >> $BASH_ENV
+      - run:
+          name: Run Maven Pass Test
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-pass-report
+
+  # --------------------------
+  # FAIL JOB
+  # --------------------------
+  fail-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI FAILED JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-FAILED-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="FAILED-JOB-TEST CIRCLE CI"' >> $BASH_ENV
+      - run:
+          name: Run Maven Fail Test
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-fail-report
+
+  # --------------------------
+  # MULTIPLE TEST JOB
+  # --------------------------
+  multiple-job:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI MULTIPLE JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-MULTIPLE-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="MULTIPLE-JOB-TEST CIRCLE CI"' >> $BASH_ENV
+      - run:
+          name: Run Multiple Tests
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/MultipleTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: testng-multiple-report
+
+  # --------------------------
+  # PARENT-CHILD JOB (2 steps)
+  # --------------------------
+  parent-child-step1:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST CIRCLE CI"' >> $BASH_ENV
+      - run:
+          name: Run Parent Job
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: parent-job-report
+
+  parent-child-step2:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Setup BrowserStack Env
+          command: |
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST CIRCLE CI"' >> $BASH_ENV
+      - run:
+          name: Run Child Job
+          command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
+      - store_artifacts:
+          path: target/surefire-reports/junitreports/
+          destination: child-job-report
 
 # --------------------------
-# WORKFLOWS (Each job/sequence is a separate, independent pipeline run)
+# WORKFLOWS (Each workflow is independently triggerable)
 # --------------------------
 workflows:
-  version: 2
+  # The version: 2 line is removed because version: 2.1 is already at the top.
   
   # 1. Independent Workflow for PASS JOB
   qei-pass-pipeline:
@@ -33,8 +132,7 @@ workflows:
           requires:
             - parent-child-step1
   
-  # 5. Full Pipeline (Optional - for running everything at once)
-  #    You can still keep a single workflow to run all the above jobs together
+  # 5. Full Pipeline (for running everything at once)
   qei-full-pipeline:
     jobs:
       - pass-job
@@ -45,7 +143,7 @@ workflows:
           requires:
             - parent-child-step1
   
-  # 6. Scheduled Pipeline (Optional - Keep your original scheduled run)
+  # 6. Scheduled Pipeline
   qei-scheduled-run:
     triggers:
       - schedule:
@@ -54,7 +152,6 @@ workflows:
             branches:
               only: master
     jobs:
-      # This runs the full set of tests on schedule
       - pass-job
       - fail-job
       - multiple-job
