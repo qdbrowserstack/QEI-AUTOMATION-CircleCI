@@ -21,6 +21,8 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports/junitreports/
           destination: testng-pass-report
+      - store_test_results:
+          path: target/surefire-reports/junitreports/  # <--- NEW STEP HERE
 
   # --------------------------
   # FAIL JOB
@@ -42,6 +44,8 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports/junitreports/
           destination: testng-fail-report
+      - store_test_results:
+          path: target/surefire-reports/junitreports/  # <--- NEW STEP HERE
 
   # --------------------------
   # MULTIPLE TEST JOB
@@ -63,6 +67,8 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports/junitreports/
           destination: testng-multiple-report
+      - store_test_results:
+          path: target/surefire-reports/junitreports/  # <--- NEW STEP HERE
 
   # --------------------------
   # PARENT-CHILD JOB (2 steps)
@@ -84,6 +90,8 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports/junitreports/
           destination: parent-job-report
+      - store_test_results:
+          path: target/surefire-reports/junitreports/  # <--- NEW STEP HERE
 
   parent-child-step2:
     docker:
@@ -102,6 +110,8 @@ jobs:
       - store_artifacts:
           path: target/surefire-reports/junitreports/
           destination: child-job-report
+      - store_test_results:
+          path: target/surefire-reports/junitreports/  # <--- NEW STEP HERE
 
 # --------------------------
 # WORKFLOWS (Each workflow is independently triggerable)
