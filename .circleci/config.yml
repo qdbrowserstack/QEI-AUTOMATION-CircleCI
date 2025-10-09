@@ -22,6 +22,8 @@ jobs:
           path: target/surefire-reports/junitreports/
           destination: testng-pass-report
 
+  # [ ... Other Jobs: fail-job, multiple-job, parent-child-step1, parent-child-step2 remain the same ]
+
   # --------------------------
   # FAIL JOB
   # --------------------------
@@ -104,11 +106,24 @@ jobs:
           destination: child-job-report
 
 # --------------------------
-# WORKFLOWS (define schedule + job order)
+# WORKFLOWS (Default runs on Push/Manual, Schedule runs on Sunday)
 # --------------------------
 workflows:
   version: 2
-  qei-pipeline:
+  
+  # This workflow runs on every Push OR Manual Trigger from the UI
+  qei-default-pipeline:
+    jobs:
+      - pass-job
+      - fail-job
+      - multiple-job
+      - parent-child-step1
+      - parent-child-step2:
+          requires:
+            - parent-child-step1
+
+  # This workflow runs ONLY on the scheduled time for the master branch
+  qei-scheduled-run:
     triggers:
       - schedule:
           cron: "30 6 * * 0" # Every Sunday 06:30 UTC (12:00 PM IST)
