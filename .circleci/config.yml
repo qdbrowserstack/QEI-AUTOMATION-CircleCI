@@ -114,7 +114,7 @@ workflows:
           cron: "30 6 * * 0" # Every Sunday 06:30 UTC (12:00 PM IST)
           filters:
             branches:
-              only: master
+              only: main
     jobs:
       - pass-job
       - fail-job
