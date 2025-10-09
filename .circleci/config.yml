@@ -132,17 +132,6 @@ workflows:
           requires:
             - parent-child-step1
   
-  # 5. Full Pipeline (for running everything at once)
-  qei-full-pipeline:
-    jobs:
-      - pass-job
-      - fail-job
-      - multiple-job
-      - parent-child-step1
-      - parent-child-step2:
-          requires:
-            - parent-child-step1
-  
   # 6. Scheduled Pipeline
   qei-scheduled-run:
     triggers:
