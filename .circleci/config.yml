@@ -12,9 +12,9 @@ jobs:
       - run:
           name: Setup BrowserStack Env
           command: |
-            echo 'export BROWSERSTACK_PROJECT="QEI PASSING JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_BUILD="Build-QEI-PASSING-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_NAME="PASSING-JOB-TEST"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_PROJECT="QEI PASSING JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PASSING-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PASSING-JOB-TEST CIRCLE CI"' >> $BASH_ENV
       - run:
           name: Run Maven Pass Test
           command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
@@ -35,9 +35,9 @@ jobs:
       - run:
           name: Setup BrowserStack Env
           command: |
-            echo 'export BROWSERSTACK_PROJECT="QEI FAILED JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_BUILD="Build-QEI-FAILED-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_NAME="FAILED-JOB-TEST"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_PROJECT="QEI FAILED JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-FAILED-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="FAILED-JOB-TEST CIRCLE CI"' >> $BASH_ENV
       - run:
           name: Run Maven Fail Test
           command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
@@ -56,9 +56,9 @@ jobs:
       - run:
           name: Setup BrowserStack Env
           command: |
-            echo 'export BROWSERSTACK_PROJECT="QEI MULTIPLE JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_BUILD="Build-QEI-MULTIPLE-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_NAME="MULTIPLE-JOB-TEST"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_PROJECT="QEI MULTIPLE JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-MULTIPLE-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="MULTIPLE-JOB-TEST CIRCLE CI"' >> $BASH_ENV
       - run:
           name: Run Multiple Tests
           command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/MultipleTest.xml
@@ -77,9 +77,9 @@ jobs:
       - run:
           name: Setup BrowserStack Env
           command: |
-            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST CIRCLE CI"' >> $BASH_ENV
       - run:
           name: Run Parent Job
           command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/passTest.xml
@@ -95,9 +95,9 @@ jobs:
       - run:
           name: Setup BrowserStack Env
           command: |
-            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB"' >> $BASH_ENV
-            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_PROJECT="QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_BUILD="Build-QEI-PARENT-CHILD-JOB CIRCLE CI"' >> $BASH_ENV
+            echo 'export BROWSERSTACK_NAME="PARENT-CHILD-JOB-TEST CIRCLE CI"' >> $BASH_ENV
       - run:
           name: Run Child Job
           command: mvn clean test -Dsurefire.suiteXmlFiles=src/test/config/failTest.xml
